@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -25,6 +25,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.lib.configs.moduleConfig;
+import frc.lib.interfaces.ModuleIO;
+
 import java.util.Queue;
 
 /**
@@ -66,35 +69,11 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final boolean isTurnMotorInverted = true;
   private final Rotation2d absoluteEncoderOffset;
 
-  public ModuleIOTalonFX(int index) {
-    switch (index) {
-      case 0:
-        driveTalon = new TalonFX(12);
-        turnTalon = new TalonFX(13);
-        cancoder = new CANcoder(11);
-        absoluteEncoderOffset = Rotation2d.fromRotations(-0.271240); // MUST BE CALIBRATED
-        break;
-      case 1:
-        driveTalon = new TalonFX(22);
-        turnTalon = new TalonFX(23);
-        cancoder = new CANcoder(21);
-        absoluteEncoderOffset = Rotation2d.fromRotations(-0.063477); // MUST BE CALIBRATED
-        break;
-      case 2:
-        driveTalon = new TalonFX(32);
-        turnTalon = new TalonFX(33);
-        cancoder = new CANcoder(31);
-        absoluteEncoderOffset = Rotation2d.fromRotations(-0.271729); // MUST BE CALIBRATED
-        break;
-      case 3:
-        driveTalon = new TalonFX(42);
-        turnTalon = new TalonFX(43);
-        cancoder = new CANcoder(41);
-        absoluteEncoderOffset = Rotation2d.fromRotations(-0.94); // MUST BE CALIBRATED
-        break;
-      default:
-        throw new RuntimeException("Invalid module index");
-    }
+  public ModuleIOTalonFX(moduleConfig config) {
+    driveTalon = new TalonFX(config.driveMotorID);
+    turnTalon = new TalonFX(config.angleMotorID);
+    cancoder = new CANcoder(config.cancoderID);
+    absoluteEncoderOffset = Rotation2d.fromRotations(config.cancoderID);
 
     var driveConfig = new TalonFXConfiguration();
     driveConfig.CurrentLimits.StatorCurrentLimit = 40.0;

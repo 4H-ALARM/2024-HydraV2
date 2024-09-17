@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.swerve;
 
 import edu.wpi.first.wpilibj.Notifier;
 import java.util.ArrayList;
@@ -56,29 +56,29 @@ public class SparkMaxOdometryThread {
 
   public Queue<Double> registerSignal(Supplier<OptionalDouble> signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
-    Drive.odometryLock.lock();
+    Swerve.odometryLock.lock();
     try {
       signals.add(signal);
       queues.add(queue);
     } finally {
-      Drive.odometryLock.unlock();
+      Swerve.odometryLock.unlock();
     }
     return queue;
   }
 
   public Queue<Double> makeTimestampQueue() {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
-    Drive.odometryLock.lock();
+    Swerve.odometryLock.lock();
     try {
       timestampQueues.add(queue);
     } finally {
-      Drive.odometryLock.unlock();
+      Swerve.odometryLock.unlock();
     }
     return queue;
   }
 
   private void periodic() {
-    Drive.odometryLock.lock();
+    Swerve.odometryLock.lock();
     double timestamp = Logger.getRealTimestamp() / 1e6;
     try {
       double[] values = new double[signals.size()];
@@ -101,7 +101,7 @@ public class SparkMaxOdometryThread {
         }
       }
     } finally {
-      Drive.odometryLock.unlock();
+      Swerve.odometryLock.unlock();
     }
   }
 }

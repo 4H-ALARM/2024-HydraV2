@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.swerve.Swerve;
 import java.util.function.DoubleSupplier;
 
 public class DriveCommands {
@@ -35,7 +35,7 @@ public class DriveCommands {
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
   public static Command joystickDrive(
-      Drive drive,
+      Swerve swerve,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier) {
@@ -63,15 +63,15 @@ public class DriveCommands {
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
-          drive.runVelocity(
+          swerve.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec(),
+                  linearVelocity.getX() * swerve.getMaxLinearSpeedMetersPerSec(),
+                  linearVelocity.getY() * swerve.getMaxLinearSpeedMetersPerSec(),
+                  omega * swerve.getMaxAngularSpeedRadPerSec(),
                   isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
+                      ? swerve.getRotation().plus(new Rotation2d(Math.PI))
+                      : swerve.getRotation()));
         },
-        drive);
+            swerve);
   }
 }
