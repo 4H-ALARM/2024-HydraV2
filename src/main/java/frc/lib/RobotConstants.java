@@ -7,43 +7,43 @@ public class RobotConstants {
 
     public static final class SwerveConstants {
         public static final moduleConfig mod0 = new moduleConfig(
-                0,
+                12,
                 false,
-                0,
+                13,
                 false,
-                0,
-                Rotation2d.fromRotations(0),
+                11,
+                Rotation2d.fromRotations(-0.271240),
                 0
         );
 
         public static final moduleConfig mod1 = new moduleConfig(
-                0,
+                22,
                 false,
-                0,
+                23,
                 false,
-                0,
-                Rotation2d.fromRotations(0),
-                0
+                21,
+                Rotation2d.fromRotations(-0.063477),
+                1
         );
 
         public static final moduleConfig mod2 = new moduleConfig(
-                0,
+                32,
                 false,
-                0,
+                33,
                 false,
-                0,
-                Rotation2d.fromRotations(0),
-                0
+                31,
+                Rotation2d.fromRotations(-0.271729),
+                2
         );
 
         public static final moduleConfig mod3 = new moduleConfig(
-                0,
+                42,
                 false,
-                0,
+                43,
                 false,
-                0,
-                Rotation2d.fromRotations(0),
-                0
+                41,
+                Rotation2d.fromRotations(-0.94),
+                3
         );
 
     }

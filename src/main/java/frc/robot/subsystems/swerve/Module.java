@@ -28,7 +28,7 @@ public class Module {
   static final double ODOMETRY_FREQUENCY = 250.0;
 
   private final ModuleIO io;
-  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+  private final frc.lib.interfaces.ModuleIOInputsAutoLogged inputs = new frc.lib.interfaces.ModuleIOInputsAutoLogged();
   private final int index;
 
   private final SimpleMotorFeedforward driveFeedforward;

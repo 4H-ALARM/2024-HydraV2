@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -132,6 +133,11 @@ public class RobotContainer {
                             new Pose2d(swerve.getPose().getTranslation(), new Rotation2d())),
                             swerve)
                 .ignoringDisable(true));
+//    controller
+//            .x()
+//            .whileTrue(
+//                    new PathPlannerAuto("Square Auto")
+//            );
   }
 
   /**
