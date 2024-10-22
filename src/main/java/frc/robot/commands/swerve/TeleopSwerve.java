@@ -1,6 +1,6 @@
-package frc.robot.commands;
+package frc.robot.commands.swerve;
 
-import frc.robot.Constants;
+import frc.lib.Constants;
 import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
