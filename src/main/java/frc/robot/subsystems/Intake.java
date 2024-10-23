@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.configs.intakeConfig;
-import frc.robot.classes.BeamBreakHandler;
+import frc.robot.classes.handlers.BeamBreakHandler;
 import org.littletonrobotics.junction.Logger; // AdvantageKit Logger for telemetry
 
 public class Intake extends SubsystemBase {
@@ -23,6 +23,7 @@ public class Intake extends SubsystemBase {
 
         // AdvantageKit logger setup for telemetry
         Logger.recordOutput("Intake/MotorSpeed", intakeMotor.get());
+        Logger.recordOutput("Intake/IntakeState", "Inactive"); // Record action
     }
 
     // Public method to get the singleton instance
@@ -36,17 +37,17 @@ public class Intake extends SubsystemBase {
     // Basic intake control methods
     public void pickUpNote() {
         intakeMotor.set(this.config.intakeMotorSpeed);
-        Logger.recordOutput("Intake/PickUp", true); // Record action
+        Logger.recordOutput("Intake/IntakeState", "IntakingNote"); // Record action
     }
 
     public void rejectNote() {
         intakeMotor.set(-this.config.intakeMotorSpeed);
-        Logger.recordOutput("Intake/Reject", true); // Record action
+        Logger.recordOutput("Intake/IntakeState", "RejectingNote"); // Record action
     }
 
     public void stop() {
         intakeMotor.set(0);
-        Logger.recordOutput("Intake/Stop", true); // Record action
+        Logger.recordOutput("Intake/IntakeState", "Inactive"); // Record action
     }
 
     // Status checking methods

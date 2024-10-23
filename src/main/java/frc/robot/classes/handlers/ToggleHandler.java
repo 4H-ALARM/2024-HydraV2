@@ -1,4 +1,7 @@
-package frc.robot.classes;
+package frc.robot.classes.handlers;
+
+import org.littletonrobotics.junction.Logger;
+
 /**
  * The ToggleHandler class provides a simple mechanism to toggle a boolean state.
  * It can be used to manage on/off states or any other binary state in a system.
@@ -6,13 +9,18 @@ package frc.robot.classes;
 public class ToggleHandler {
     // Variable to store the current state (true or false)
     private boolean state;
+    // Variable to store the key to post
+    private String key;
 
     /**
      * Constructor to initialize the ToggleHandler.
      * The state is initialized to false by default.
+     * @param akitkey
      */
-    public ToggleHandler() {
+    public ToggleHandler(String akitkey) {
         this.state = false;  // Initial state is set to false (off)
+        this.key = akitkey; // key for advantagekit logging
+        Logger.recordOutput("Toggles/"+this.key, state);
     }
 
     /**
@@ -21,6 +29,7 @@ public class ToggleHandler {
      */
     public void toggle() {
         state = !state;  // Inverts the current state
+        Logger.recordOutput("Toggles/"+this.key, state);
     }
 
     /**

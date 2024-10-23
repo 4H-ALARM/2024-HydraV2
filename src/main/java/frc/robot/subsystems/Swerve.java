@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.classes.GyroHandler;
+import frc.robot.classes.handlers.GyroHandler;
 
 import org.littletonrobotics.junction.Logger;  // AdvantageKit logger
 

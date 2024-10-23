@@ -1,4 +1,4 @@
-package frc.robot.classes;
+package frc.robot.classes.handlers;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.lib.configs.beamBreakConfig;

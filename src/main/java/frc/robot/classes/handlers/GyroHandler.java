@@ -1,4 +1,4 @@
-package frc.robot.classes;
+package frc.robot.classes.handlers;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import org.littletonrobotics.junction.Logger; // AdvantageKit Logger for telemetry
