@@ -9,12 +9,10 @@ public class shooterConfig {
     public final double targetshufflevelocity;
     public final double targetbaseshootvelocity;
     public final double tolerance;
-    public final double P;
-    public final double I;
-    public final double D;
+    public final PIDConfig pidConfig;
 
 
-    public shooterConfig(int topMotor, int bottomMotor, double passvelocity, double ampvelocity, double sendbackvelocity, double shufflevelocity, double basevelocity, double tolerance, double kp, double ki, double kd) {
+    public shooterConfig(int topMotor, int bottomMotor, double passvelocity, double ampvelocity, double sendbackvelocity, double shufflevelocity, double basevelocity, double tolerance, double kp, double ki, double kd, double kf) {
         this.shooterTopMotor = topMotor;
         this.shooterBottomMotor = bottomMotor;
         this.targetpassvelocity = passvelocity;
@@ -23,8 +21,6 @@ public class shooterConfig {
         this.targetshufflevelocity = shufflevelocity;
         this.targetbaseshootvelocity = basevelocity;
         this.tolerance = tolerance;
-        this.P = kp;
-        this.I = ki;
-        this.D = kd;
+        this.pidConfig = new PIDConfig(kp, ki, kd, kf);
     }
 }

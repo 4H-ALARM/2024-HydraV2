@@ -23,10 +23,10 @@ public class Shooter extends SubsystemBase {
 
         // Initialize motors
         shooterTopMotor = new CANSparkMax(this.config.shooterTopMotor, CANSparkBase.MotorType.kBrushless);
-        shooterTopMotor.getPIDController().setP(config.P, 0);
-        shooterTopMotor.getPIDController().setI(config.I, 0);
-        shooterTopMotor.getPIDController().setD(config.D, 0);
-        shooterTopMotor.getPIDController().setFF(1, 0);
+        shooterTopMotor.getPIDController().setP(config.pidConfig.kp, 0);
+        shooterTopMotor.getPIDController().setI(config.pidConfig.ki, 0);
+        shooterTopMotor.getPIDController().setD(config.pidConfig.kd, 0);
+        shooterTopMotor.getPIDController().setFF(config.pidConfig.kf, 0);
 
         shooterBottomMotor = new CANSparkMax(this.config.shooterBottomMotor, CANSparkBase.MotorType.kBrushless);
         shooterBottomMotor.follow(shooterTopMotor);

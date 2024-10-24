@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel;
 import org.littletonrobotics.junction.Logger; // AdvantageKit Logger class
@@ -17,6 +18,10 @@ public class Indexer extends SubsystemBase {
     private Indexer(indexerConfig config) {
         this.config = config;
         this.indexerMotor = new CANSparkMax(this.config.shooterIntakeMotor, CANSparkLowLevel.MotorType.kBrushless);
+        this.indexerMotor.getPIDController().setP(this.config.pidConfig.kp);
+        this.indexerMotor.getPIDController().setI(this.config.pidConfig.ki);
+        this.indexerMotor.getPIDController().setD(this.config.pidConfig.kd);
+        this.indexerMotor.getPIDController().setFF(this.config.pidConfig.kf);
     }
 
     /**
@@ -32,20 +37,13 @@ public class Indexer extends SubsystemBase {
     }
 
     /**
-     * Starts the indexer motor in reverse to "index" a note.
+     * Starts the indexer motor at a specified velocity
      */
-    public void indexNote() {
-        indexerMotor.set(-config.shooterIntakeSpeed);
+    public void startIndexer(double velocity) {
+        indexerMotor.getPIDController().setReference(velocity, CANSparkBase.ControlType.kVelocity);
         Logger.getInstance().recordOutput("Indexer/IndexerState", "Indexing");
     }
 
-    /**
-     * Starts the indexer motor at half-speed to "feed" a note.
-     */
-    public void feedNote() {
-        indexerMotor.set(0.5);
-        Logger.getInstance().recordOutput("Indexer/IndexerState", "Feeding");
-    }
 
     /**
      * Stops the indexer motor.
@@ -53,14 +51,6 @@ public class Indexer extends SubsystemBase {
     public void stopIndexer() {
         indexerMotor.stopMotor();
         Logger.getInstance().recordOutput("Indexer/IndexerState", "Stopped");
-    }
-
-    /**
-     * Reverses the indexer motor slightly to send the note back.
-     */
-    public void sendBack() {
-        indexerMotor.set(-0.25);
-        Logger.getInstance().recordOutput("Indexer/IndexerState", "Reversing");
     }
 
     /**
