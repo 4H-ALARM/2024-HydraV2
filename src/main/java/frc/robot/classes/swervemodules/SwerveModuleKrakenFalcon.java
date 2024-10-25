@@ -29,7 +29,7 @@ public class SwerveModuleKrakenFalcon {
     private CANcoder angleEncoder; // CANCoder sensor for reading the angle
 
     // Feedforward object to calculate necessary voltage for driving
-    private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(Constants.driveKS, Constants.driveKV, Constants.driveKA);
+    private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(Constants.SwerveConstants.driveKS, Constants.SwerveConstants.driveKV, Constants.SwerveConstants.driveKA);
 
     // Control requests for the drive motor
     private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0); // Open-loop control (percent output)
@@ -92,12 +92,12 @@ public class SwerveModuleKrakenFalcon {
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
             // Open-loop: scale speed to percent output and apply to drive motor
-            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.maxSpeed;
+            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
             mDriveMotor.setControl(driveDutyCycle);
         }
         else {
             // Closed-loop: set velocity control and feedforward for precise speed control
-            driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.drivetrainconfig.wheelCircumference);
+            driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.SwerveConstants.drivetrainconfig.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
             mDriveMotor.setControl(driveVelocity);
         }
@@ -127,7 +127,7 @@ public class SwerveModuleKrakenFalcon {
      */
     public SwerveModuleState getState(){
         return new SwerveModuleState(
-                Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.drivetrainconfig.wheelCircumference),
+                Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.SwerveConstants.drivetrainconfig.wheelCircumference),
                 Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
     }
@@ -139,7 +139,7 @@ public class SwerveModuleKrakenFalcon {
      */
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(
-                Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.drivetrainconfig.wheelCircumference),
+                Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.SwerveConstants.drivetrainconfig.wheelCircumference),
                 Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
     }

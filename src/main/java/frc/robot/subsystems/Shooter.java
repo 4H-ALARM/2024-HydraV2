@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.configs.shooterConfig;
+import frc.robot.classes.TunableValue;
 import org.littletonrobotics.junction.Logger;
+import frc.lib.Constants;
 
 public class Shooter extends SubsystemBase {
 
@@ -17,16 +19,40 @@ public class Shooter extends SubsystemBase {
     // Configurations
     public final shooterConfig config;
 
+    public final TunableValue SHOOTER_BASE_VELOCITY;
+    public final TunableValue SHOOTER_PASS_VELOCITY;
+    public final TunableValue SHOOTER_AMP_VELOCITY;
+    public final TunableValue SHOOTER_SHUFFLE_VELOCITY;
+    public final TunableValue SHOOTER_SENDBACK_VELOCITY;
+
+    public final TunableValue SHOOTERP;
+    public final TunableValue SHOOTERI;
+    public final TunableValue SHOOTERD;
+    public final TunableValue SHOOTERF;
+
     // Private constructor for singleton pattern
     private Shooter(shooterConfig config) {
         this.config = config;
 
+        //target velocities
+        SHOOTER_BASE_VELOCITY = new TunableValue("SHOOTER_BASE_VELOCITY", config.targetbaseshootvelocity, Constants.DEBUG);
+        SHOOTER_PASS_VELOCITY = new TunableValue("SHOOTER_PASS_VELOCITY", config.targetpassvelocity, Constants.DEBUG);
+        SHOOTER_AMP_VELOCITY = new TunableValue("SHOOTER_AMP_VELOCITY", config.targetampvelocity, Constants.DEBUG);
+        SHOOTER_SHUFFLE_VELOCITY = new TunableValue("SHOOTER_SHUFFLE_VELOCITY", config.targetshufflevelocity, Constants.DEBUG);
+        SHOOTER_SENDBACK_VELOCITY = new TunableValue("SHOOTER_SENDBACK_VELOCITY", config.targetsendbackvelocity, Constants.DEBUG);
+
+        //PIDF
+        SHOOTERP = new TunableValue("SHOOTER_P", config.pidConfig.kp, Constants.DEBUG);
+        SHOOTERI = new TunableValue("SHOOTER_I", config.pidConfig.ki, Constants.DEBUG);
+        SHOOTERD = new TunableValue("SHOOTER_D", config.pidConfig.kd, Constants.DEBUG);
+        SHOOTERF = new TunableValue("SHOOTER_F", config.pidConfig.kf, Constants.DEBUG);
+
         // Initialize motors
         shooterTopMotor = new CANSparkMax(this.config.shooterTopMotor, CANSparkBase.MotorType.kBrushless);
-        shooterTopMotor.getPIDController().setP(config.pidConfig.kp, 0);
-        shooterTopMotor.getPIDController().setI(config.pidConfig.ki, 0);
-        shooterTopMotor.getPIDController().setD(config.pidConfig.kd, 0);
-        shooterTopMotor.getPIDController().setFF(config.pidConfig.kf, 0);
+        shooterTopMotor.getPIDController().setP(SHOOTERP.get(), 0);
+        shooterTopMotor.getPIDController().setI(SHOOTERI.get(), 0);
+        shooterTopMotor.getPIDController().setD(SHOOTERD.get(), 0);
+        shooterTopMotor.getPIDController().setFF(SHOOTERF.get(), 0);
 
         shooterBottomMotor = new CANSparkMax(this.config.shooterBottomMotor, CANSparkBase.MotorType.kBrushless);
         shooterBottomMotor.follow(shooterTopMotor);
@@ -47,6 +73,12 @@ public class Shooter extends SubsystemBase {
     // Start the shooter motors at a given velocity
     public void startShooter(double velocity) {
         // Set the target velocity for the shooter
+        if (Constants.DEBUG) {
+            shooterTopMotor.getPIDController().setP(SHOOTERP.get(), 0);
+            shooterTopMotor.getPIDController().setI(SHOOTERI.get(), 0);
+            shooterTopMotor.getPIDController().setD(SHOOTERD.get(), 0);
+            shooterTopMotor.getPIDController().setFF(SHOOTERF.get(), 0);
+        }
         shooterTopMotor.getPIDController().setReference(velocity, CANSparkMax.ControlType.kVelocity, 0);
 
         // Log velocity setpoint

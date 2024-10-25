@@ -34,19 +34,19 @@ public class Swerve extends SubsystemBase {
         var visionStdDevs = VecBuilder.fill(1, 1, 1);
 
         mSwerveMods = new SwerveModuleKrakenFalcon[] {
-                new SwerveModuleKrakenFalcon(0, Constants.mod0),
-                new SwerveModuleKrakenFalcon(1, Constants.mod1),
-                new SwerveModuleKrakenFalcon(2, Constants.mod2),
-                new SwerveModuleKrakenFalcon(3, Constants.mod3)
+                new SwerveModuleKrakenFalcon(0, Constants.SwerveConstants.mod0),
+                new SwerveModuleKrakenFalcon(1, Constants.SwerveConstants.mod1),
+                new SwerveModuleKrakenFalcon(2, Constants.SwerveConstants.mod2),
+                new SwerveModuleKrakenFalcon(3, Constants.SwerveConstants.mod3)
         };
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.swerveKinematics, getGyroYaw(), getModulePositions());
-        swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.swerveKinematics, getGyroYaw(), getModulePositions(), getPose(), stateStdDevs, visionStdDevs);
+        swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, getGyroYaw(), getModulePositions());
+        swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.swerveKinematics, getGyroYaw(), getModulePositions(), getPose(), stateStdDevs, visionStdDevs);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates =
-                Constants.swerveKinematics.toSwerveModuleStates(
+                Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
                         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                 translation.getX(),
                                 translation.getY(),
@@ -58,7 +58,7 @@ public class Swerve extends SubsystemBase {
                                 translation.getY(),
                                 rotation)
                 );
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
 
         for(SwerveModuleKrakenFalcon mod : mSwerveMods){
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -70,10 +70,10 @@ public class Swerve extends SubsystemBase {
 
     public void driveRobotRelative(ChassisSpeeds speeds) {
         SwerveModuleState[] swerveModuleStates =
-                Constants.swerveKinematics.toSwerveModuleStates(
+                Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
                         new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond)
                 );
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
         this.latestRobotRelativeSpeeds = speeds;
 
         for (SwerveModuleKrakenFalcon mod : mSwerveMods) {
@@ -89,7 +89,7 @@ public class Swerve extends SubsystemBase {
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
 
         for(SwerveModuleKrakenFalcon mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
