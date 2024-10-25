@@ -19,11 +19,13 @@ import frc.robot.classes.handlers.GyroHandler;
 
 import org.littletonrobotics.junction.Logger;  // AdvantageKit logger
 
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 public class Swerve extends SubsystemBase {
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
     private final SwerveModuleKrakenFalcon[] mSwerveMods;
-    private final GyroHandler gyro;
+    private final Pigeon2 gyro;
     private ChassisSpeeds latestRobotRelativeSpeeds;
 
     public final TunableValue PATHPLANNER_TRANSLATION_P;
@@ -35,8 +37,8 @@ public class Swerve extends SubsystemBase {
     public final TunableValue PATHPLANNER_ROTATION_D;
 
     public Swerve() {
-        gyro = new GyroHandler(Constants.pigeonID);
-        gyro.getPigeon().clearStickyFaults();
+        gyro = new Pigeon2(Constants.pigeonID);
+        gyro.clearStickyFaults();
         latestRobotRelativeSpeeds = new ChassisSpeeds(0, 0, 0);
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -151,7 +153,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        double yaw = gyro.getPigeon().getYaw().getValue();
+        double yaw = gyro.getYaw().getValue();
         Logger.recordOutput("Swerve/GyroYaw", yaw);
         return Rotation2d.fromDegrees(yaw);
     }
@@ -170,8 +172,5 @@ public class Swerve extends SubsystemBase {
         // Log odometry and pose estimator data
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
         Logger.recordOutput("Swerve/PoseEstimatorPose", swerveDrivePoseEstimator.getEstimatedPosition());
-
-        // Log gyro telemetry
-        gyro.logTelemetry();
     }
 }

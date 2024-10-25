@@ -133,7 +133,7 @@ public class RobotContainer {
             new TeleopSwerve(
                 s_Swerve, 
                 () -> -pilot.getRawAxis(LeftYAxis),
-                () -> -pilot.getRawAxis(LeftYAxis),
+                () -> -pilot.getRawAxis(LeftXAxis),
                 () -> -pilot.getRawAxis(RightXAxis),
                     pilotLeftBumper::getAsBoolean
             )
@@ -147,6 +147,7 @@ public class RobotContainer {
         pilotyButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         pilotRightBumper.whileTrue(prepareShootCommandGroup);
         pilotRightBumper.onTrue(feedNote.withTimeout(1));
+        pilotLeftTrigger.onTrue(intakeCommandGroup);
 
         copilotRightTrigger.whileTrue(prepareShootCommandGroup);
 

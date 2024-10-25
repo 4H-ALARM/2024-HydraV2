@@ -51,9 +51,9 @@ public final class Constants {
     public static final indexerConfig indexerconfig = new indexerConfig(
             55,
             0,
+            0.35,
             0,
-            0,
-            1,
+            0.05,
             0,
             0,
             1
@@ -64,17 +64,17 @@ public final class Constants {
             0,
             0,
             0,
+            0.35,
             0,
+            0.05,
             0,
-            1,
-            0,
-            0,
+            10,
             1
 
     );
     public static final intakeConfig intakeconfig = new intakeConfig(
             50,
-            1
+            -0.8
     );
 
     public static final beamBreakConfig beambreakconfig = new beamBreakConfig(
