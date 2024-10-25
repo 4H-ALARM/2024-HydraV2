@@ -1,17 +1,18 @@
-package frc.robot.commands.indexer;
+package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Indexer;
+import frc.lib.configs.shooterConfig;
+import frc.robot.subsystems.Shooter;
 
 
-public class FeedNote extends Command {
-    private final Indexer indexer;
+public class AmpRev extends Command {
+    private final Shooter shooter;
 
-    public FeedNote(Indexer indexer) {
-        this.indexer = indexer;
+    public AmpRev(Shooter shooter) {
+        this.shooter = shooter;
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
-        addRequirements(this.indexer);
+        addRequirements(this.shooter);
     }
 
     @Override
@@ -21,7 +22,7 @@ public class FeedNote extends Command {
 
     @Override
     public void execute() {
-        this.indexer.startIndexer(this.indexer.INDEXER_FEED_VELOCITY.get());
+        this.shooter.startShooter(this.shooter.SHOOTER_AMP_VELOCITY.get());
     }
 
     @Override
@@ -32,6 +33,6 @@ public class FeedNote extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        this.indexer.stopIndexer();
+        this.shooter.stop();
     }
 }

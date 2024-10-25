@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.classes.TunableValue;
 import frc.robot.classes.swervemodules.SwerveModuleKrakenFalcon;
 import frc.lib.Constants;
 
@@ -25,6 +26,14 @@ public class Swerve extends SubsystemBase {
     private final GyroHandler gyro;
     private ChassisSpeeds latestRobotRelativeSpeeds;
 
+    public final TunableValue PATHPLANNER_TRANSLATION_P;
+    public final TunableValue PATHPLANNER_TRANSLATION_I;
+    public final TunableValue PATHPLANNER_TRANSLATION_D;
+
+    public final TunableValue PATHPLANNER_ROTATION_P;
+    public final TunableValue PATHPLANNER_ROTATION_I;
+    public final TunableValue PATHPLANNER_ROTATION_D;
+
     public Swerve() {
         gyro = new GyroHandler(Constants.pigeonID);
         gyro.getPigeon().clearStickyFaults();
@@ -32,6 +41,14 @@ public class Swerve extends SubsystemBase {
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
         var visionStdDevs = VecBuilder.fill(1, 1, 1);
+
+        PATHPLANNER_TRANSLATION_P = new TunableValue("PATHPLANNER_TRANSLATION_P", Constants.SwerveConstants.pathplannertranslationpid.kp , Constants.DEBUG);
+        PATHPLANNER_TRANSLATION_I = new TunableValue("PATHPLANNER_TRANSLATION_I", Constants.SwerveConstants.pathplannertranslationpid.ki , Constants.DEBUG);
+        PATHPLANNER_TRANSLATION_D = new TunableValue("PATHPLANNER_TRANSLATION_D", Constants.SwerveConstants.pathplannertranslationpid.kd , Constants.DEBUG);
+
+        PATHPLANNER_ROTATION_P = new TunableValue("PATHPLANNER_ROTATION_P", Constants.SwerveConstants.pathplannerrotationpid.kp , Constants.DEBUG);
+        PATHPLANNER_ROTATION_I = new TunableValue("PATHPLANNER_ROTATION_I", Constants.SwerveConstants.pathplannerrotationpid.ki , Constants.DEBUG);
+        PATHPLANNER_ROTATION_D = new TunableValue("PATHPLANNER_ROTATION_D", Constants.SwerveConstants.pathplannerrotationpid.kd , Constants.DEBUG);
 
         mSwerveMods = new SwerveModuleKrakenFalcon[] {
                 new SwerveModuleKrakenFalcon(0, Constants.SwerveConstants.mod0),

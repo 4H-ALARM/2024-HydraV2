@@ -21,7 +21,7 @@ public class IndexNote extends Command {
 
     @Override
     public void execute() {
-
+        this.indexer.startIndexer(this.indexer.INDEXER_INTAKE_VELOCITY.get());
     }
 
     @Override
@@ -32,6 +32,6 @@ public class IndexNote extends Command {
 
     @Override
     public void end(boolean interrupted) {
-
+        this.indexer.stopIndexer();
     }
 }

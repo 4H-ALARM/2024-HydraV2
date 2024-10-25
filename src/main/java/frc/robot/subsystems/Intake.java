@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.Constants;
 import frc.lib.configs.intakeConfig;
+import frc.robot.classes.TunableValue;
 import frc.robot.classes.handlers.BeamBreakHandler;
 import org.littletonrobotics.junction.Logger; // AdvantageKit Logger for telemetry
 
@@ -15,11 +17,15 @@ public class Intake extends SubsystemBase {
     private final intakeConfig config;
     private final BeamBreakHandler beamBreak;
 
+    public final TunableValue INTAKE_MOTOR_SPEED;
+
     // Private constructor to enforce singleton
     private Intake(intakeConfig config, BeamBreakHandler beamBreakHandler) {
         this.config = config;
         intakeMotor = new CANSparkMax(this.config.intakeMotorId, CANSparkLowLevel.MotorType.kBrushless);
         beamBreak = beamBreakHandler;
+
+        INTAKE_MOTOR_SPEED = new TunableValue("INTAKE_MOTOR_SPEED", 0, Constants.DEBUG);
 
         // AdvantageKit logger setup for telemetry
         Logger.recordOutput("Intake/MotorSpeed", intakeMotor.get());

@@ -1,6 +1,7 @@
 package frc.robot.commands.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.configs.indexerConfig;
 import frc.robot.subsystems.Indexer;
 
 
@@ -21,7 +22,7 @@ public class FeedBackNote extends Command {
 
     @Override
     public void execute() {
-
+        this.indexer.startIndexer(this.indexer.INDEXER_FEEDBACK_VELOCITY.get());
     }
 
     @Override
@@ -32,6 +33,6 @@ public class FeedBackNote extends Command {
 
     @Override
     public void end(boolean interrupted) {
-
+        this.indexer.stopIndexer();
     }
 }

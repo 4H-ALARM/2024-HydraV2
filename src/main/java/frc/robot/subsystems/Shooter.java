@@ -22,7 +22,6 @@ public class Shooter extends SubsystemBase {
     public final TunableValue SHOOTER_BASE_VELOCITY;
     public final TunableValue SHOOTER_PASS_VELOCITY;
     public final TunableValue SHOOTER_AMP_VELOCITY;
-    public final TunableValue SHOOTER_SHUFFLE_VELOCITY;
     public final TunableValue SHOOTER_SENDBACK_VELOCITY;
 
     public final TunableValue SHOOTERP;
@@ -38,7 +37,6 @@ public class Shooter extends SubsystemBase {
         SHOOTER_BASE_VELOCITY = new TunableValue("SHOOTER_BASE_VELOCITY", config.targetbaseshootvelocity, Constants.DEBUG);
         SHOOTER_PASS_VELOCITY = new TunableValue("SHOOTER_PASS_VELOCITY", config.targetpassvelocity, Constants.DEBUG);
         SHOOTER_AMP_VELOCITY = new TunableValue("SHOOTER_AMP_VELOCITY", config.targetampvelocity, Constants.DEBUG);
-        SHOOTER_SHUFFLE_VELOCITY = new TunableValue("SHOOTER_SHUFFLE_VELOCITY", config.targetshufflevelocity, Constants.DEBUG);
         SHOOTER_SENDBACK_VELOCITY = new TunableValue("SHOOTER_SENDBACK_VELOCITY", config.targetsendbackvelocity, Constants.DEBUG);
 
         //PIDF

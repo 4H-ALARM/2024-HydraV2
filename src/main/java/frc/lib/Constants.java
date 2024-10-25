@@ -18,15 +18,6 @@ public final class Constants {
 
 
 
-    public static TunableValue INTAKE_MOTOR_SPEED = new TunableValue("INTAKE_MOTOR_SPEED", 0, DEBUG);
-
-    public static TunableValue INDEXER_INDEX_VELOCITY = new TunableValue("INDEXER_INDEX_VELOCITY", 0, DEBUG);
-    public static TunableValue INDEXER_FEEDBACK_VELOCITY = new TunableValue("INDEXER_FEEDBACK_VELOCITY", 0, DEBUG);
-    public static TunableValue INDEXER_INTAKE_VELOCITY = new TunableValue("INDEXER_INTAKE_VELOCITY", 0, DEBUG);
-
-
-
-
 
 
     public static final class SwerveConstants {
@@ -51,6 +42,8 @@ public final class Constants {
         public static final double driveKS = 0.32;
         public static final double driveKV = 1.51;
         public static final double driveKA = 0.27;
+        public static final PIDConfig pathplannertranslationpid = new PIDConfig(1, 0, 0);
+        public static final PIDConfig pathplannerrotationpid = new PIDConfig(1, 0, 0);
     }
 
 
@@ -60,10 +53,10 @@ public final class Constants {
             0,
             0,
             0,
+            1,
             0,
             0,
-            0,
-            0
+            1
     );
     public static final shooterConfig shooterconfig = new shooterConfig(
             53,
@@ -73,18 +66,20 @@ public final class Constants {
             0,
             0,
             0,
+            1,
             0,
             0,
-            0,
-            0,
-            0
+            1
 
     );
     public static final intakeConfig intakeconfig = new intakeConfig(
             50,
-            INTAKE_MOTOR_SPEED.get()
+            1
     );
 
+    public static final beamBreakConfig beambreakconfig = new beamBreakConfig(
+            0
+    );
 
 
 }

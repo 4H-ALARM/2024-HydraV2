@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel;
+import frc.lib.Constants;
+import frc.robot.classes.TunableValue;
 import org.littletonrobotics.junction.Logger; // AdvantageKit Logger class
 import frc.lib.configs.indexerConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,14 +16,34 @@ public class Indexer extends SubsystemBase {
     // Singleton instance
     private static Indexer instance = null;
 
+    public final TunableValue INDEXER_FEED_VELOCITY;
+    public final TunableValue INDEXER_FEEDBACK_VELOCITY;
+    public final TunableValue INDEXER_INTAKE_VELOCITY;
+
+    public final TunableValue INDEXERP;
+    public final TunableValue INDEXERI;
+    public final TunableValue INDEXERD;
+    public final TunableValue INDEXERF;
+
     // Private constructor for Singleton pattern
     private Indexer(indexerConfig config) {
         this.config = config;
+
+        INDEXER_FEED_VELOCITY = new TunableValue("INDEXER_FEED_VELOCITY", 0, Constants.DEBUG);;
+        INDEXER_FEEDBACK_VELOCITY = new TunableValue("INDEXER_FEEDBACK_VELOCITY", 0, Constants.DEBUG);
+        INDEXER_INTAKE_VELOCITY = new TunableValue("INDEXER_INTAKE_VELOCITY", 0, Constants.DEBUG);
+
+        //PIDF
+        INDEXERP = new TunableValue("INDEXER_P", config.pidConfig.kp, Constants.DEBUG);
+        INDEXERI = new TunableValue("INDEXER_I", config.pidConfig.ki, Constants.DEBUG);
+        INDEXERD = new TunableValue("INDEXER_D", config.pidConfig.kd, Constants.DEBUG);
+        INDEXERF = new TunableValue("INDEXER_F", config.pidConfig.kf, Constants.DEBUG);
+
         this.indexerMotor = new CANSparkMax(this.config.shooterIntakeMotor, CANSparkLowLevel.MotorType.kBrushless);
-        this.indexerMotor.getPIDController().setP(this.config.pidConfig.kp);
-        this.indexerMotor.getPIDController().setI(this.config.pidConfig.ki);
-        this.indexerMotor.getPIDController().setD(this.config.pidConfig.kd);
-        this.indexerMotor.getPIDController().setFF(this.config.pidConfig.kf);
+        this.indexerMotor.getPIDController().setP(INDEXERP.get());
+        this.indexerMotor.getPIDController().setI(INDEXERI.get());
+        this.indexerMotor.getPIDController().setD(INDEXERD.get());
+        this.indexerMotor.getPIDController().setFF(INDEXERF.get());
     }
 
     /**
