@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -87,6 +88,7 @@ public class RobotContainer {
     private final Intake s_Intake;
     private final Indexer s_Indexer;
     private final Shooter s_Shooter;
+    private final Arm s_Arm;
 
     private final IntakeCommandGroup intakeCommandGroup;
     private final PrepareShootCommandGroup prepareShootCommandGroup;
@@ -115,6 +117,7 @@ public class RobotContainer {
         s_Intake = Intake.getInstance(Constants.intakeconfig, c_BeamBreak);
         s_Indexer = Indexer.getInstance(Constants.indexerconfig);
         s_Shooter = Shooter.getInstance(Constants.shooterconfig);
+        s_Arm = new Arm(Constants.armConfig);
 
         intakeCommandGroup = new IntakeCommandGroup(s_Intake, s_Indexer, c_BeamBreak);
         prepareShootCommandGroup = new PrepareShootCommandGroup(s_Shooter);
@@ -164,12 +167,23 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () -> -pilot.getRawAxis(LeftYAxis),
-                () -> -pilot.getRawAxis(LeftXAxis),
-                () -> pilot.getRawAxis(RightXAxis),
+                () -> -(pilot.getRawAxis(LeftYAxis) - (pilot.getRawAxis(LeftYAxis) * (0.7*s_Arm.percentRaised()))),
+                () -> -(pilot.getRawAxis(LeftXAxis) - (pilot.getRawAxis(LeftXAxis) * (0.7*s_Arm.percentRaised()))),
+                () -> (pilot.getRawAxis(RightXAxis) - (pilot.getRawAxis(RightXAxis) * (0.7*s_Arm.percentRaised()))),
                     pilotLeftBumper::getAsBoolean
             )
         );
+
+        s_Arm.setDefaultCommand(new InstantCommand(() -> {
+            s_Arm.setControlType(false);
+            s_Arm.setTargetAngle(Rotation2d.fromRotations(Constants.armConfig.intakeAngle));
+            if (copilotLeftTrigger.getAsBoolean()) {
+                s_Arm.setControlType(true);
+                s_Arm.setTargetAngle(Rotation2d.fromRotations(Constants.armConfig.ampAngle));
+            }
+            s_Arm.moveArm(s_Arm.getArmPowerToTarget());
+//             ArmSubsystem.moveArm(MathUtil.applyDeadband(copilot.getRawAxis(LeftYAxis), 0.1));
+        }, s_Arm));
 
         configureButtonBindings();
     }
@@ -187,7 +201,6 @@ public class RobotContainer {
 
         copilotRightTrigger.whileTrue(prepareShootCommandGroupcopilot);
         copilotRightBumper.onTrue(new ParallelCommandGroup(feedBackNote, sendBackShooter).withTimeout(0.7));
-        copilotaButton.whileTrue(rejectNote);
         copilotbButton.whileTrue(ampRev);
         copilotxButton.whileTrue(passRev);
 

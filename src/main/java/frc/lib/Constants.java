@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.lib.configs.*;
 import frc.robot.classes.TunableValue;
 
@@ -79,6 +80,18 @@ public final class Constants {
 
     public static final beamBreakConfig beambreakconfig = new beamBreakConfig(
             0
+    );
+
+    public static armConfig armConfig = new armConfig(
+            51,
+            52,
+            new PIDConfig(1.0, 0.0, 0.0),
+            0.51,
+            0.45,
+            0.661,
+            1,
+            163.32+180,
+            new DigitalInput(2)
     );
 
 
