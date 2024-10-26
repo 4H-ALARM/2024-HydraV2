@@ -22,10 +22,10 @@ public final class Constants {
 
     public static final class SwerveConstants {
         public static final COTSswerveconfig chosenModule = COTSswerveconfig.KrakenX60Falcon500MK4i(COTSswerveconfig.driveRatios.L1);
-        public static final swervemoduleconfig mod0 = new swervemoduleconfig(11, 12, 13, Rotation2d.fromRotations(-0.200195)); // Front Left Module
-        public static final swervemoduleconfig mod1 = new swervemoduleconfig(21, 22, 23, Rotation2d.fromRotations(-0.155762)); // Front Right Module
-        public static final swervemoduleconfig mod2 = new swervemoduleconfig(31, 32, 33, Rotation2d.fromRotations(-0.370850)); // Back Left Module
-        public static final swervemoduleconfig mod3 = new swervemoduleconfig(41, 42, 43, Rotation2d.fromRotations(-0.437744)); // Back Right Module
+        public static final swervemoduleconfig mod0 = new swervemoduleconfig(11, 12, 13, Rotation2d.fromRotations(0.299805)); // Front Left Module
+        public static final swervemoduleconfig mod1 = new swervemoduleconfig(21, 22, 23, Rotation2d.fromRotations(0.343018)); // Front Right Module
+        public static final swervemoduleconfig mod2 = new swervemoduleconfig(31, 32, 33, Rotation2d.fromRotations(0.128906)); // Back Left Module
+        public static final swervemoduleconfig mod3 = new swervemoduleconfig(41, 42, 43, Rotation2d.fromRotations(0.060303)); // Back Right Module
         public static final driveTrainConfig drivetrainconfig =  new driveTrainConfig(Units.inchesToMeters(20.75), Units.inchesToMeters(20.75), chosenModule.wheelCircumference);
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(new Translation2d(drivetrainconfig.wheelBase / 2.0, drivetrainconfig.trackWidth / 2.0), new Translation2d(drivetrainconfig.wheelBase / 2.0, -drivetrainconfig.trackWidth / 2.0), new Translation2d(-drivetrainconfig.wheelBase / 2.0, drivetrainconfig.trackWidth / 2.0), new Translation2d(-drivetrainconfig.wheelBase / 2.0, -drivetrainconfig.trackWidth / 2.0));
         public static final double driveGearRatio = chosenModule.driveGearRatio;

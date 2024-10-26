@@ -90,7 +90,7 @@ public class Swerve extends SubsystemBase {
     public void driveRobotRelative(ChassisSpeeds speeds) {
         SwerveModuleState[] swerveModuleStates =
                 Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
-                        new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond)
+                        new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond)
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
         this.latestRobotRelativeSpeeds = speeds;

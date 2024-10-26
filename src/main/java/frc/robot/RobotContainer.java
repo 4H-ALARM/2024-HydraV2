@@ -105,6 +105,8 @@ public class RobotContainer {
 
 
         NamedCommands.registerCommand("AutoShoot", autoShootCommandGroup);
+        NamedCommands.registerCommand("Rev", prepareShootCommandGroup);
+        NamedCommands.registerCommand("Feed", feedNote);
         NamedCommands.registerCommand("Intake", intakeCommandGroup);
 
         AutoBuilder.configureHolonomic(
@@ -134,7 +136,7 @@ public class RobotContainer {
                 s_Swerve, 
                 () -> -pilot.getRawAxis(LeftYAxis),
                 () -> -pilot.getRawAxis(LeftXAxis),
-                () -> -pilot.getRawAxis(RightXAxis),
+                () -> pilot.getRawAxis(RightXAxis),
                     pilotLeftBumper::getAsBoolean
             )
         );
@@ -145,9 +147,10 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         pilotyButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        pilotRightBumper.whileTrue(prepareShootCommandGroup);
+        pilotRightTrigger.whileTrue(prepareShootCommandGroup);
         pilotRightBumper.onTrue(feedNote.withTimeout(1));
         pilotLeftTrigger.onTrue(intakeCommandGroup);
+        pilotaButton.whileTrue(new PathPlannerAuto("Center3Note"));
 
         copilotRightTrigger.whileTrue(prepareShootCommandGroup);
 
