@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -24,7 +25,15 @@ import frc.robot.classes.handlers.ToggleHandler;
 import frc.robot.commands.commandgroups.AutoShootCommandGroup;
 import frc.robot.commands.commandgroups.IntakeCommandGroup;
 import frc.robot.commands.commandgroups.PrepareShootCommandGroup;
+import frc.robot.commands.indexer.FeedBackNote;
 import frc.robot.commands.indexer.FeedNote;
+import frc.robot.commands.indexer.IndexNote;
+import frc.robot.commands.intake.IntakeNote;
+import frc.robot.commands.intake.RejectNote;
+import frc.robot.commands.shooter.AmpRev;
+import frc.robot.commands.shooter.PassRev;
+import frc.robot.commands.shooter.SendBackShooter;
+import frc.robot.commands.shooter.SpeakerRev;
 import frc.robot.commands.swerve.TeleopSwerve;
 import frc.robot.subsystems.*;
 public class RobotContainer {
@@ -57,8 +66,11 @@ public class RobotContainer {
 
     private final Trigger pilotyButton = pilot.y();
     private final Trigger pilotaButton = pilot.a();
+    private final Trigger pilotbButton = pilot.b();
+    private final Trigger pilotxButton = pilot.x();
     private final Trigger copilotaButton = copilot.a();
     private final Trigger copilotbButton = copilot.b();
+    private final Trigger copilotxButton = copilot.x();
 
     private final Trigger copilotPOVup = copilot.povUp();
     private final Trigger copilotPOVleft = copilot.povLeft();
@@ -82,6 +94,14 @@ public class RobotContainer {
     private final AutoShootCommandGroup autoShootCommandGroup;
     private final FeedNote feedNote;
     private final FeedNote feedNotecopilot;
+    private final FeedBackNote feedBackNote;
+    private final IndexNote indexNote;
+    private final IntakeNote intakeNote;
+    private final RejectNote rejectNote;
+    private final AmpRev ampRev;
+    private final PassRev passRev;
+    private final SendBackShooter sendBackShooter;
+    private final SpeakerRev speakerRev;
 
 
     public RobotContainer() {
@@ -102,6 +122,16 @@ public class RobotContainer {
         autoShootCommandGroup = new AutoShootCommandGroup(s_Indexer, s_Shooter, c_BeamBreak);
         feedNote = new FeedNote(s_Indexer);
         feedNotecopilot = new FeedNote(s_Indexer);
+        feedBackNote = new FeedBackNote(s_Indexer);
+        indexNote = new IndexNote(s_Indexer);
+        intakeNote = new IntakeNote(s_Intake, c_BeamBreak);
+        rejectNote = new RejectNote(s_Intake);
+        ampRev = new AmpRev(s_Shooter);
+        passRev = new PassRev(s_Shooter);
+        sendBackShooter = new SendBackShooter(s_Shooter);
+        speakerRev = new SpeakerRev(s_Shooter);
+
+
 
 
         NamedCommands.registerCommand("AutoShoot", autoShootCommandGroup);
@@ -150,9 +180,17 @@ public class RobotContainer {
         pilotRightTrigger.whileTrue(prepareShootCommandGroup);
         pilotRightBumper.onTrue(feedNote.withTimeout(1));
         pilotLeftTrigger.onTrue(intakeCommandGroup);
-        pilotaButton.whileTrue(new PathPlannerAuto("Center3Note"));
+        //pilotaButton.whileTrue(new PathPlannerAuto("Center3Note"));
+        pilotaButton.whileTrue(rejectNote);
 
-        copilotRightTrigger.whileTrue(prepareShootCommandGroup);
+        /* Copilot buttons */
+
+        copilotRightTrigger.whileTrue(prepareShootCommandGroupcopilot);
+        copilotRightBumper.onTrue(new ParallelCommandGroup(feedBackNote, sendBackShooter).withTimeout(0.7));
+        copilotaButton.whileTrue(rejectNote);
+        copilotbButton.whileTrue(ampRev);
+        copilotxButton.whileTrue(passRev);
+
 
     }
 

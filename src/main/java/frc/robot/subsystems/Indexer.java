@@ -29,9 +29,9 @@ public class Indexer extends SubsystemBase {
     private Indexer(indexerConfig config) {
         this.config = config;
 
-        INDEXER_FEED_VELOCITY = new TunableValue("INDEXER_FEED_VELOCITY", 0, Constants.DEBUG);;
-        INDEXER_FEEDBACK_VELOCITY = new TunableValue("INDEXER_FEEDBACK_VELOCITY", 0, Constants.DEBUG);
-        INDEXER_INTAKE_VELOCITY = new TunableValue("INDEXER_INTAKE_VELOCITY", 0, Constants.DEBUG);
+        INDEXER_FEED_VELOCITY = new TunableValue("INDEXER_FEED_VELOCITY", Constants.indexerconfig.shooterIntakeSpeed, Constants.DEBUG);;
+        INDEXER_FEEDBACK_VELOCITY = new TunableValue("INDEXER_FEEDBACK_VELOCITY", Constants.indexerconfig.indexerFeedBackSpeed, Constants.DEBUG);
+        INDEXER_INTAKE_VELOCITY = new TunableValue("INDEXER_INTAKE_VELOCITY", Constants.indexerconfig.indexSpeed, Constants.DEBUG);
 
         //PIDF
         INDEXERP = new TunableValue("INDEXER_P", config.pidConfig.kp, Constants.DEBUG);
@@ -63,7 +63,7 @@ public class Indexer extends SubsystemBase {
      */
     public void startIndexer(double velocity) {
         // indexerMotor.getPIDController().setReference(velocity, CANSparkBase.ControlType.kVelocity);
-        indexerMotor.set(0.5);
+        indexerMotor.set(velocity);
         Logger.recordOutput("Indexer/IndexerState", "Indexing");
     }
 

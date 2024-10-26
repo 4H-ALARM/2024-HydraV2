@@ -43,19 +43,19 @@ public final class Constants {
         public static final double driveKV = 1.51;
         public static final double driveKA = 0.27;
         public static final PIDConfig pathplannertranslationpid = new PIDConfig(1, 0, 0);
-        public static final PIDConfig pathplannerrotationpid = new PIDConfig(1, 0, 0);
+        public static final PIDConfig pathplannerrotationpid = new PIDConfig(2, 0, 0);
     }
 
 
     public static final int pigeonID = 4;
     public static final indexerConfig indexerconfig = new indexerConfig(
             55,
-            0,
-            0.35,
-            0,
+            0.5,
+            0.5,
+            -0.2,
             0.05,
             0,
-            0,
+            0,  
             1
     );
     public static final shooterConfig shooterconfig = new shooterConfig(
@@ -63,7 +63,7 @@ public final class Constants {
             54,
             0,
             0,
-            0,
+            -0.1,
             0.35,
             0,
             0.05,
