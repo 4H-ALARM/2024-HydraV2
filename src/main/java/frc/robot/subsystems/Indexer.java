@@ -62,9 +62,8 @@ public class Indexer extends SubsystemBase {
      * Starts the indexer motor at a specified velocity
      */
     public void startIndexer(double velocity) {
-        // indexerMotor.getPIDController().setReference(velocity, CANSparkBase.ControlType.kVelocity);
-        indexerMotor.set(0.5);
-        Logger.recordOutput("Indexer/IndexerState", "Indexing");
+        indexerMotor.getPIDController().setReference(velocity, CANSparkBase.ControlType.kVelocity);
+        Logger.getInstance().recordOutput("Indexer/IndexerState", "Indexing");
     }
 
 

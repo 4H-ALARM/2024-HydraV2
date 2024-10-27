@@ -53,6 +53,7 @@ public class Robot extends LoggedRobot {
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    PortForwarder.add(5800, "orangepi1.local", 5800);
     m_robotContainer = new RobotContainer();
   }
 

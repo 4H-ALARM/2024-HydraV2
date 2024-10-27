@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.Constants;
-import frc.robot.classes.PhotonCameraHandler;
 import frc.robot.classes.handlers.BeamBreakHandler;
 import frc.robot.classes.handlers.ToggleHandler;
 import frc.robot.commands.commandgroups.AutoShootCommandGroup;
@@ -68,7 +67,6 @@ public class RobotContainer {
 
 
     private final BeamBreakHandler c_BeamBreak;
-    private final PhotonCameraHandler c_PhotonCamera1;
 
     private final ToggleHandler beamBreakDisable;
 
@@ -92,9 +90,8 @@ public class RobotContainer {
 
 
         c_BeamBreak = new BeamBreakHandler(Constants.beambreakconfig, beamBreakDisable);
-        c_PhotonCamera1 = new PhotonCameraHandler(Constants.camera1Config);
 
-        s_Swerve = new Swerve(c_PhotonCamera1);
+        s_Swerve = new Swerve();
         s_Intake = Intake.getInstance(Constants.intakeconfig, c_BeamBreak);
         s_Indexer = Indexer.getInstance(Constants.indexerconfig);
         s_Shooter = Shooter.getInstance(Constants.shooterconfig);
@@ -108,8 +105,6 @@ public class RobotContainer {
 
 
         NamedCommands.registerCommand("AutoShoot", autoShootCommandGroup);
-        NamedCommands.registerCommand("Rev", prepareShootCommandGroup);
-        NamedCommands.registerCommand("Feed", feedNote);
         NamedCommands.registerCommand("Intake", intakeCommandGroup);
 
         AutoBuilder.configureHolonomic(
@@ -138,8 +133,8 @@ public class RobotContainer {
             new TeleopSwerve(
                 s_Swerve, 
                 () -> -pilot.getRawAxis(LeftYAxis),
-                () -> -pilot.getRawAxis(LeftXAxis),
-                () -> pilot.getRawAxis(RightXAxis),
+                () -> -pilot.getRawAxis(LeftYAxis),
+                () -> -pilot.getRawAxis(RightXAxis),
                     pilotLeftBumper::getAsBoolean
             )
         );
@@ -150,10 +145,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         pilotyButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        pilotRightTrigger.whileTrue(prepareShootCommandGroup);
+        pilotRightBumper.whileTrue(prepareShootCommandGroup);
         pilotRightBumper.onTrue(feedNote.withTimeout(1));
-        pilotLeftTrigger.onTrue(intakeCommandGroup);
-        pilotaButton.whileTrue(new PathPlannerAuto("Center3Note"));
 
         copilotRightTrigger.whileTrue(prepareShootCommandGroup);
 
