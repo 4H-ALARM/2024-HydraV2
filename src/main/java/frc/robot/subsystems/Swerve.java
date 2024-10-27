@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.*;
 import frc.robot.classes.TunableValue;
 import frc.robot.classes.swervemodules.SwerveModuleKrakenFalcon;
 import frc.lib.Constants;
@@ -10,9 +13,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.classes.handlers.GyroHandler;
@@ -20,6 +20,11 @@ import frc.robot.classes.handlers.GyroHandler;
 import org.littletonrobotics.junction.Logger;  // AdvantageKit logger
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+
+import java.util.Optional;
 
 public class Swerve extends SubsystemBase {
     private final SwerveDriveOdometry swerveOdometry;
@@ -27,6 +32,10 @@ public class Swerve extends SubsystemBase {
     private final SwerveModuleKrakenFalcon[] mSwerveMods;
     private final Pigeon2 gyro;
     private ChassisSpeeds latestRobotRelativeSpeeds;
+    PhotonCamera camera;
+    AprilTagFieldLayout aprilTagFieldLayout;
+    Transform3d robotToCam; //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
+    PhotonPoseEstimator photonPoseEstimator;
 
     public final TunableValue PATHPLANNER_TRANSLATION_P;
     public final TunableValue PATHPLANNER_TRANSLATION_I;
@@ -39,6 +48,10 @@ public class Swerve extends SubsystemBase {
     public Swerve() {
         gyro = new Pigeon2(Constants.pigeonID);
         gyro.clearStickyFaults();
+        camera = new PhotonCamera("orangepi1");
+        aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
         latestRobotRelativeSpeeds = new ChassisSpeeds(0, 0, 0);
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -164,12 +177,22 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        return photonPoseEstimator.update();
+    }
+
     @Override
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveDrivePoseEstimator.update(getGyroYaw(), getModulePositions());
+        if (getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).isPresent()) {
+            swerveDrivePoseEstimator.addVisionMeasurement(getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().estimatedPose.toPose2d(), getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().timestampSeconds);
+        }
+
 
         // Log odometry and pose estimator data
+        Logger.recordOutput("Orangepi1/isConnected", camera.isConnected());
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
         Logger.recordOutput("Swerve/PoseEstimatorPose", swerveDrivePoseEstimator.getEstimatedPosition());
     }
