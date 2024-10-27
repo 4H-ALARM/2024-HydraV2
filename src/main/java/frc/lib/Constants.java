@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.lib.configs.*;
 import frc.robot.classes.TunableValue;
 import org.photonvision.PhotonPoseEstimator;
@@ -47,19 +48,19 @@ public final class Constants {
         public static final double driveKV = 1.51;
         public static final double driveKA = 0.27;
         public static final PIDConfig pathplannertranslationpid = new PIDConfig(1, 0, 0);
-        public static final PIDConfig pathplannerrotationpid = new PIDConfig(1, 0, 0);
+        public static final PIDConfig pathplannerrotationpid = new PIDConfig(2, 0, 0);
     }
 
 
     public static final int pigeonID = 4;
     public static final indexerConfig indexerconfig = new indexerConfig(
             55,
-            0,
-            0.35,
-            0,
+            0.5,
+            0.5,
+            -0.2,
             0.05,
             0,
-            0,
+            0,  
             1
     );
     public static final shooterConfig shooterconfig = new shooterConfig(
@@ -67,7 +68,7 @@ public final class Constants {
             54,
             0,
             0,
-            0,
+            -0.1,
             0.35,
             0,
             0.05,
@@ -85,11 +86,23 @@ public final class Constants {
             0
     );
 
+
     public static final cameraConfig camera1Config = new cameraConfig(
             "orangepi1",
             AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
             new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)),
-            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
+
+    public static armConfig armConfig = new armConfig(
+            51,
+            52,
+            new PIDConfig(1.0, 0.0, 0.0),
+            0.51,
+            0.45,
+            0.661,
+            1,
+            163.32+180,
+            new DigitalInput(2)
+
     );
 
 
