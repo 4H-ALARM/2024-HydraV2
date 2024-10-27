@@ -23,9 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.Constants;
 import frc.robot.classes.handlers.BeamBreakHandler;
 import frc.robot.classes.handlers.ToggleHandler;
-import frc.robot.commands.commandgroups.AutoShootCommandGroup;
-import frc.robot.commands.commandgroups.IntakeCommandGroup;
-import frc.robot.commands.commandgroups.PrepareShootCommandGroup;
+import frc.robot.commands.commandgroups.*;
 import frc.robot.commands.indexer.FeedBackNote;
 import frc.robot.commands.indexer.FeedNote;
 import frc.robot.commands.indexer.IndexNote;
@@ -104,6 +102,8 @@ public class RobotContainer {
     private final PassRev passRev;
     private final SendBackShooter sendBackShooter;
     private final SpeakerRev speakerRev;
+    private final ShuffleNoteCommandGroup shuffleNote;
+    private final SendBackNoteCommandGroup sendNoteBack;
 
 
     public RobotContainer() {
@@ -133,6 +133,8 @@ public class RobotContainer {
         passRev = new PassRev(s_Shooter);
         sendBackShooter = new SendBackShooter(s_Shooter);
         speakerRev = new SpeakerRev(s_Shooter);
+        shuffleNote = new ShuffleNoteCommandGroup(s_Indexer,s_Shooter);
+        sendNoteBack = new SendBackNoteCommandGroup(s_Indexer,s_Shooter);
 
 
 
@@ -200,9 +202,10 @@ public class RobotContainer {
         /* Copilot buttons */
 
         copilotRightTrigger.whileTrue(prepareShootCommandGroupcopilot);
-        copilotRightBumper.onTrue(new ParallelCommandGroup(feedBackNote, sendBackShooter).withTimeout(0.7));
         copilotbButton.whileTrue(ampRev);
         copilotxButton.whileTrue(passRev);
+        copilotaButton.onTrue(shuffleNote.withTimeout(1));
+        copilotRightBumper.onTrue(sendNoteBack.withTimeout(0.7));
 
 
     }
