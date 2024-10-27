@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.1065413031081586,
-      "y": 6.493426072408406
+      "x": 0.8132898021617583,
+      "y": 6.524845876081234
     },
-    "rotation": 0
+    "rotation": 62.35402463626139
   },
   "command": {
     "type": "sequential",
@@ -47,6 +47,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AmpSideLeave"
           }
         }
       ]

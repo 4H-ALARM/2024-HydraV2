@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.AutonomousOptions;
 import frc.lib.Constants;
 import frc.robot.classes.PhotonCameraHandler;
 import frc.robot.classes.handlers.BeamBreakHandler;
@@ -213,8 +214,28 @@ public class RobotContainer {
 
     }
 
-    public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
+    public Command getAutonomousCommand(AutonomousOptions plan) {
+        switch(plan) {
+
+            case PRELOAD:
+                return new PathPlannerAuto("Preload");
+            case TWO_NOTE_CENTER:
+                return new PathPlannerAuto("CenterNote");
+            case CENTERAMPSIDE:
+                return new PathPlannerAuto("CenterAmpSide");
+            case CENTERPODIUMSIDE:
+                return new PathPlannerAuto("CenterPodiumSide");
+            case FOURNOTECLOSE:
+                return new PathPlannerAuto("Center3Note");
+            case AMPSIDECENTERLINE:
+                return new PathPlannerAuto("AmpSideCenterline");
+            case AMPSIDEPRELOADLEAVE:
+                return new PathPlannerAuto("AmpSidePreloadLeave");
+            case SOURCESIDEPRELOADLEAVE:
+                return new PathPlannerAuto("SourceSidePreloadLeave");
+
+
+        }
         return new PathPlannerAuto("Center3Note");
     }
 

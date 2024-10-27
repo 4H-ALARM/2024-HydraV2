@@ -48,7 +48,7 @@ public final class Constants {
         public static final double driveKV = 1.51;
         public static final double driveKA = 0.27;
         public static final PIDConfig pathplannertranslationpid = new PIDConfig(1, 0, 0);
-        public static final PIDConfig pathplannerrotationpid = new PIDConfig(2, 0, 0);
+        public static final PIDConfig pathplannerrotationpid = new PIDConfig(4, 0, 0);
     }
 
 
@@ -91,6 +91,8 @@ public final class Constants {
             "orangepi1",
             AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
             new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
+            );
 
     public static armConfig armConfig = new armConfig(
             51,

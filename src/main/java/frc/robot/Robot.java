@@ -7,8 +7,11 @@ package frc.robot;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.AutonomousOptions;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -26,6 +29,8 @@ public class Robot extends LoggedRobot {
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
 
   private Command m_autonomousCommand;
+
+  private final SendableChooser<AutonomousOptions> positionChooser = new SendableChooser<>();
 
   private RobotContainer m_robotContainer;
 
@@ -50,6 +55,17 @@ public class Robot extends LoggedRobot {
 
 // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+
+    positionChooser.setDefaultOption("Preload", AutonomousOptions.PRELOAD);
+    positionChooser.setDefaultOption("TwoNoteCenter", AutonomousOptions.TWO_NOTE_CENTER);
+    positionChooser.addOption("CenterPodiumSide", AutonomousOptions.CENTERPODIUMSIDE);
+    positionChooser.addOption("CenterAmpSide", AutonomousOptions.CENTERAMPSIDE);
+    positionChooser.addOption("FourNoteClose", AutonomousOptions.FOURNOTECLOSE);
+    positionChooser.addOption("AmpSidePreloadLeave", AutonomousOptions.AMPSIDEPRELOADLEAVE);
+    positionChooser.addOption("SourceSidePreloadLeave", AutonomousOptions.SOURCESIDEPRELOADLEAVE);
+    positionChooser.addOption("AmpSideCenterLine", AutonomousOptions.AMPSIDECENTERLINE);
+
+    SmartDashboard.putData("AutonomousSelection", positionChooser);
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -82,7 +98,8 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    AutonomousOptions sp = positionChooser.getSelected();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(sp);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

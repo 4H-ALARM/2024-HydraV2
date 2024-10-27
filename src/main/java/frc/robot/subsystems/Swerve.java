@@ -183,7 +183,7 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveDrivePoseEstimator.update(getGyroYaw(), getModulePositions());
-        updateOdometry(camera1);
+        //updateOdometry(camera1);
 
         // Log odometry and pose estimator data
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
