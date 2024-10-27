@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2505003900884375,
-      "y": 5.595244965087426
+      "x": 0.7923432663798724,
+      "y": 6.535319143972178
     },
-    "rotation": 0
+    "rotation": 61.38954033403475
   },
   "command": {
     "type": "sequential",
@@ -66,7 +66,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "LeftNoteFromCenter"
+                        "pathName": "LeftSideToLeftNote"
                       }
                     },
                     {
@@ -88,7 +88,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ToCenterFromLeftNote"
+                  "pathName": "LeftNoteToLeftSide"
                 }
               },
               {
@@ -149,7 +149,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "CenterNoteFromCenter"
+                        "pathName": "LeftSideToFarLeftCenter"
                       }
                     },
                     {
@@ -171,90 +171,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ToCenterFromCenterNote"
-                }
-              },
-              {
-                "type": "race",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Rev"
-                      }
-                    },
-                    {
-                      "type": "sequential",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 1.5
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Feed"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.3
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "RightNoteFromCenter"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ToCenterFromRightNote"
+                  "pathName": "FarLeftCenterToLeft"
                 }
               },
               {

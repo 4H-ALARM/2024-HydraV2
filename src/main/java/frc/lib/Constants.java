@@ -4,13 +4,17 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.configs.*;
 import frc.robot.classes.TunableValue;
+import org.photonvision.PhotonPoseEstimator;
 
 public final class Constants {
     public static final boolean DEBUG = false;
@@ -22,10 +26,10 @@ public final class Constants {
 
     public static final class SwerveConstants {
         public static final COTSswerveconfig chosenModule = COTSswerveconfig.KrakenX60Falcon500MK4i(COTSswerveconfig.driveRatios.L1);
-        public static final swervemoduleconfig mod0 = new swervemoduleconfig(11, 12, 13, Rotation2d.fromRotations(-0.200195)); // Front Left Module
-        public static final swervemoduleconfig mod1 = new swervemoduleconfig(21, 22, 23, Rotation2d.fromRotations(-0.155762)); // Front Right Module
-        public static final swervemoduleconfig mod2 = new swervemoduleconfig(31, 32, 33, Rotation2d.fromRotations(-0.370850)); // Back Left Module
-        public static final swervemoduleconfig mod3 = new swervemoduleconfig(41, 42, 43, Rotation2d.fromRotations(-0.437744)); // Back Right Module
+        public static final swervemoduleconfig mod0 = new swervemoduleconfig(11, 12, 13, Rotation2d.fromRotations(0.299805)); // Front Left Module
+        public static final swervemoduleconfig mod1 = new swervemoduleconfig(21, 22, 23, Rotation2d.fromRotations(0.343018)); // Front Right Module
+        public static final swervemoduleconfig mod2 = new swervemoduleconfig(31, 32, 33, Rotation2d.fromRotations(0.128906)); // Back Left Module
+        public static final swervemoduleconfig mod3 = new swervemoduleconfig(41, 42, 43, Rotation2d.fromRotations(0.060303)); // Back Right Module
         public static final driveTrainConfig drivetrainconfig =  new driveTrainConfig(Units.inchesToMeters(20.75), Units.inchesToMeters(20.75), chosenModule.wheelCircumference);
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(new Translation2d(drivetrainconfig.wheelBase / 2.0, drivetrainconfig.trackWidth / 2.0), new Translation2d(drivetrainconfig.wheelBase / 2.0, -drivetrainconfig.trackWidth / 2.0), new Translation2d(-drivetrainconfig.wheelBase / 2.0, drivetrainconfig.trackWidth / 2.0), new Translation2d(-drivetrainconfig.wheelBase / 2.0, -drivetrainconfig.trackWidth / 2.0));
         public static final double driveGearRatio = chosenModule.driveGearRatio;
@@ -51,9 +55,9 @@ public final class Constants {
     public static final indexerConfig indexerconfig = new indexerConfig(
             55,
             0,
+            0.35,
             0,
-            0,
-            1,
+            0.05,
             0,
             0,
             1
@@ -64,21 +68,28 @@ public final class Constants {
             0,
             0,
             0,
+            0.35,
             0,
+            0.05,
             0,
-            1,
-            0,
-            0,
+            10,
             1
 
     );
     public static final intakeConfig intakeconfig = new intakeConfig(
             50,
-            1
+            -0.8
     );
 
     public static final beamBreakConfig beambreakconfig = new beamBreakConfig(
             0
+    );
+
+    public static final cameraConfig camera1Config = new cameraConfig(
+            "orangepi1",
+            AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+            new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
     );
 
 
