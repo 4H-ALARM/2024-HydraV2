@@ -4,13 +4,17 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.configs.*;
 import frc.robot.classes.TunableValue;
+import org.photonvision.PhotonPoseEstimator;
 
 public final class Constants {
     public static final boolean DEBUG = false;
@@ -79,6 +83,13 @@ public final class Constants {
 
     public static final beamBreakConfig beambreakconfig = new beamBreakConfig(
             0
+    );
+
+    public static final cameraConfig camera1Config = new cameraConfig(
+            "orangepi1",
+            AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+            new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)),
+            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
     );
 
 

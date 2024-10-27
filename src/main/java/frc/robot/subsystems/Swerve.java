@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
+import frc.robot.classes.PhotonCameraHandler;
 import frc.robot.classes.TunableValue;
 import frc.robot.classes.swervemodules.SwerveModuleKrakenFalcon;
 import frc.lib.Constants;
@@ -32,10 +33,7 @@ public class Swerve extends SubsystemBase {
     private final SwerveModuleKrakenFalcon[] mSwerveMods;
     private final Pigeon2 gyro;
     private ChassisSpeeds latestRobotRelativeSpeeds;
-    PhotonCamera camera;
-    AprilTagFieldLayout aprilTagFieldLayout;
-    Transform3d robotToCam; //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-    PhotonPoseEstimator photonPoseEstimator;
+    PhotonCameraHandler camera1;
 
     public final TunableValue PATHPLANNER_TRANSLATION_P;
     public final TunableValue PATHPLANNER_TRANSLATION_I;
@@ -45,13 +43,10 @@ public class Swerve extends SubsystemBase {
     public final TunableValue PATHPLANNER_ROTATION_I;
     public final TunableValue PATHPLANNER_ROTATION_D;
 
-    public Swerve() {
+    public Swerve(PhotonCameraHandler photonCameraHandler1) {
         gyro = new Pigeon2(Constants.pigeonID);
         gyro.clearStickyFaults();
-        camera = new PhotonCamera("orangepi1");
-        aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-        robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
-        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotToCam);
+        this.camera1 = photonCameraHandler1;
         latestRobotRelativeSpeeds = new ChassisSpeeds(0, 0, 0);
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -177,22 +172,20 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
+    public void updateOdometry(PhotonCameraHandler camera) {
+        if (camera.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).isPresent()) {
+            swerveDrivePoseEstimator.addVisionMeasurement(camera.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().estimatedPose.toPose2d(), camera.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().timestampSeconds);
+        }
+
     }
 
     @Override
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveDrivePoseEstimator.update(getGyroYaw(), getModulePositions());
-        if (getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).isPresent()) {
-            swerveDrivePoseEstimator.addVisionMeasurement(getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().estimatedPose.toPose2d(), getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().timestampSeconds);
-        }
-
+        updateOdometry(camera1);
 
         // Log odometry and pose estimator data
-        Logger.recordOutput("Orangepi1/isConnected", camera.isConnected());
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
         Logger.recordOutput("Swerve/PoseEstimatorPose", swerveDrivePoseEstimator.getEstimatedPosition());
     }
