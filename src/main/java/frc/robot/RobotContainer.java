@@ -147,6 +147,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Rev", prepareShootCommandGroup);
         NamedCommands.registerCommand("Feed", feedNote);
         NamedCommands.registerCommand("Intake", intakeCommandGroup);
+        NamedCommands.registerCommand("Shuffle", shuffleNote.withTimeout(1));
 
         AutoBuilder.configureHolonomic(
                 s_Swerve::getPose,
