@@ -10,6 +10,6 @@ public class ShuffleNoteCommandGroup extends SequentialCommandGroup {
     public ShuffleNoteCommandGroup(Indexer indexer, Shooter shooter) {
         // TODO: Add your sequential commands in the super() call, e.g.
         //           super(new OpenClawCommand(), new MoveArmCommand());
-        super(new SendBackNoteCommandGroup(indexer, shooter).withTimeout(0.7), new FeedNote(indexer));
+        super(new FeedNote(indexer).withTimeout(0.2), new SendBackNoteCommandGroup(indexer, shooter).withTimeout(0.6));
     }
 }

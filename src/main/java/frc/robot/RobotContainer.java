@@ -107,6 +107,7 @@ public class RobotContainer {
     private final SpeakerRev speakerRev;
     private final ShuffleNoteCommandGroup shuffleNote;
     private final SendBackNoteCommandGroup sendNoteBack;
+    private final ShuffleNoteCommandGroup shuffleNoteAuto;
 
 
     public RobotContainer() {
@@ -138,6 +139,7 @@ public class RobotContainer {
         sendBackShooter = new SendBackShooter(s_Shooter);
         speakerRev = new SpeakerRev(s_Shooter);
         shuffleNote = new ShuffleNoteCommandGroup(s_Indexer,s_Shooter);
+        shuffleNoteAuto = new ShuffleNoteCommandGroup(s_Indexer,s_Shooter);
         sendNoteBack = new SendBackNoteCommandGroup(s_Indexer,s_Shooter);
 
 
@@ -147,7 +149,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Rev", prepareShootCommandGroup);
         NamedCommands.registerCommand("Feed", feedNote);
         NamedCommands.registerCommand("Intake", intakeCommandGroup);
-        NamedCommands.registerCommand("Shuffle", shuffleNote.withTimeout(1));
+        NamedCommands.registerCommand("Shuffle", shuffleNoteAuto.withTimeout(1));
 
         AutoBuilder.configureHolonomic(
                 s_Swerve::getPose,
