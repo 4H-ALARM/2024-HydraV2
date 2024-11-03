@@ -236,6 +236,9 @@ public class RobotContainer {
                 return new PathPlannerAuto("AmpSidePreloadLeave");
             case SOURCESIDEPRELOADLEAVE:
                 return new PathPlannerAuto("SourceSidePreloadLeave");
+            case NoRotAmpSideCenterline:
+                return new PathPlannerAuto("NoRotAmpSideCenterline");
+
 
 
         }
