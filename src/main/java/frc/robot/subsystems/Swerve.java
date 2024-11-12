@@ -149,6 +149,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void setPose(Pose2d pose) {
+        gyro.setYaw(pose.getRotation().getDegrees());
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
@@ -161,9 +162,10 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        double yaw = gyro.getYaw().getValue();
-        Logger.recordOutput("Swerve/GyroYaw", yaw);
-        return Rotation2d.fromDegrees(yaw);
+        //double yaw = gyro.getYaw().getValue();
+        //Logger.recordOutput("Swerve/GyroYaw", yaw);
+        //return Rotation2d.fromDegrees(yaw);
+        return gyro.getRotation2d();
     }
 
     public void resetModulesToAbsolute() {
@@ -188,5 +190,6 @@ public class Swerve extends SubsystemBase {
         // Log odometry and pose estimator data
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
         Logger.recordOutput("Swerve/PoseEstimatorPose", swerveDrivePoseEstimator.getEstimatedPosition());
+        //Logger.recordOutput("Swerve/GyroConnected", gyro.get);
     }
 }

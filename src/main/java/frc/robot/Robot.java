@@ -57,6 +57,7 @@ public class Robot extends LoggedRobot {
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
     positionChooser.setDefaultOption("Preload", AutonomousOptions.PRELOAD);
+    positionChooser.setDefaultOption("CenterNote", AutonomousOptions.CenterNote);
     positionChooser.setDefaultOption("TwoNoteCenter", AutonomousOptions.TWO_NOTE_CENTER);
     positionChooser.addOption("CenterPodiumSide", AutonomousOptions.CENTERPODIUMSIDE);
     positionChooser.addOption("CenterAmpSide", AutonomousOptions.CENTERAMPSIDE);

@@ -205,12 +205,14 @@ public class RobotContainer {
         pilotLeftTrigger.onTrue(intakeCommandGroup);
         //pilotaButton.whileTrue(new PathPlannerAuto("Center3Note"));
         pilotaButton.whileTrue(rejectNote);
+        pilotxButton.whileTrue(getAutonomousCommand(AutonomousOptions.CenterNote));
 
         /* Copilot buttons */
 
         copilotRightTrigger.whileTrue(prepareShootCommandGroupcopilot);
         copilotbButton.whileTrue(ampRev);
         copilotxButton.whileTrue(passRev);
+
         copilotaButton.onTrue(shuffleNote.withTimeout(1));
         copilotRightBumper.onTrue(sendNoteBack.withTimeout(0.7));
 
@@ -238,6 +240,8 @@ public class RobotContainer {
                 return new PathPlannerAuto("SourceSidePreloadLeave");
             case NoRotAmpSideCenterline:
                 return new PathPlannerAuto("NoRotAmpSideCenterline");
+            case CenterNote:
+                return new PathPlannerAuto("CenterNote");
 
 
 

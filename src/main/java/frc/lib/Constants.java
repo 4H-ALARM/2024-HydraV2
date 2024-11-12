@@ -48,7 +48,7 @@ public final class Constants {
         public static final double driveKV = 1.51;
         public static final double driveKA = 0.27;
         public static final PIDConfig pathplannertranslationpid = new PIDConfig(1, 0, 0);
-        public static final PIDConfig pathplannerrotationpid = new PIDConfig(4, 0, 0);
+        public static final PIDConfig pathplannerrotationpid = new PIDConfig(1, 0, 0);
     }
 
 
