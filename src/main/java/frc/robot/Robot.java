@@ -66,6 +66,7 @@ public class Robot extends LoggedRobot {
     positionChooser.addOption("SourceSidePreloadLeave", AutonomousOptions.SOURCESIDEPRELOADLEAVE);
     positionChooser.addOption("AmpSideCenterLine", AutonomousOptions.AMPSIDECENTERLINE);
     positionChooser.addOption("NoRotAmpSideCenterline", AutonomousOptions.NoRotAmpSideCenterline);
+    positionChooser.addOption("1NoteLeft", AutonomousOptions.OneNoteLeft);
 
     SmartDashboard.putData("AutonomousSelection", positionChooser);
 

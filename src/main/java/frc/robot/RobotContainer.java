@@ -159,7 +159,7 @@ public class RobotContainer {
                 new HolonomicPathFollowerConfig(
                         new PIDConstants(s_Swerve.PATHPLANNER_TRANSLATION_P.get(), s_Swerve.PATHPLANNER_TRANSLATION_I.get(), s_Swerve.PATHPLANNER_TRANSLATION_D.get()), // Translation PID constants
                         new PIDConstants(s_Swerve.PATHPLANNER_ROTATION_P.get(), s_Swerve.PATHPLANNER_ROTATION_I.get(), s_Swerve.PATHPLANNER_ROTATION_D.get()), // Rotation PID constants
-                        0.393,
+                        5,
                         Units.inchesToMeters(15.36),
                         new ReplanningConfig(true,true)
                 ),
@@ -205,7 +205,7 @@ public class RobotContainer {
         pilotLeftTrigger.onTrue(intakeCommandGroup);
         //pilotaButton.whileTrue(new PathPlannerAuto("Center3Note"));
         pilotaButton.whileTrue(rejectNote);
-        pilotxButton.whileTrue(getAutonomousCommand(AutonomousOptions.CenterNote));
+        pilotxButton.whileTrue(getAutonomousCommand(AutonomousOptions.OneNoteLeft));
 
         /* Copilot buttons */
 
@@ -242,11 +242,11 @@ public class RobotContainer {
                 return new PathPlannerAuto("NoRotAmpSideCenterline");
             case CenterNote:
                 return new PathPlannerAuto("CenterNote");
-
-
-
+            case OneNoteLeft:
+                return new PathPlannerAuto("1NoteLeft");
+            default:
+                return new PathPlannerAuto("Preload");
         }
-        return new PathPlannerAuto("Center3Note");
     }
 
 }
