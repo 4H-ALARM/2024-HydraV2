@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.classes.LimelightHelpers;
 import frc.robot.classes.PhotonCameraHandler;
 import frc.robot.classes.TunableValue;
 import frc.robot.classes.swervemodules.SwerveModuleKrakenFalcon;
@@ -162,10 +164,9 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        //double yaw = gyro.getYaw().getValue();
-        //Logger.recordOutput("Swerve/GyroYaw", yaw);
-        //return Rotation2d.fromDegrees(yaw);
-        return gyro.getRotation2d();
+        double yaw = gyro.getYaw().getValue();
+        Logger.recordOutput("Swerve/GyroYaw", yaw);
+        return Rotation2d.fromDegrees(yaw);
     }
 
     public void resetModulesToAbsolute() {
@@ -185,7 +186,35 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveDrivePoseEstimator.update(getGyroYaw(), getModulePositions());
-        //updateOdometry(camera1);
+        LimelightHelpers.SetRobotOrientation("limelight-shoot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 37, 0, 0, 0);
+        var alliance = DriverStation.getAlliance();
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight-shoot");
+        if (alliance.isPresent()) {
+            if (alliance.get() == DriverStation.Alliance.Red) {
+                mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight-shoot");
+            } else {
+                mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-shoot");
+            }
+        }
+
+        boolean doRejectUpdate = false;
+        if(Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+            doRejectUpdate = true;
+        }
+        if(mt2.tagCount == 0)
+        {
+            doRejectUpdate = true;
+        }
+        if(!doRejectUpdate)
+        {
+            swerveDrivePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+            swerveDrivePoseEstimator.addVisionMeasurement(
+                    mt2.pose,
+                    mt2.timestampSeconds);
+        }
+
+        updateOdometry(camera1);
 
         // Log odometry and pose estimator data
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
