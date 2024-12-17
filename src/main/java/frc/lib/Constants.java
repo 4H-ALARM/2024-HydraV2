@@ -88,7 +88,7 @@ public final class Constants {
 
 
     public static final cameraConfig camera1Config = new cameraConfig(
-            "orangepi1",
+            "camera1",
             AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
             new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)),
             PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR

@@ -4,6 +4,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.classes.LimelightHelpers;
 import frc.robot.classes.PhotonCameraHandler;
 import frc.robot.classes.TunableValue;
@@ -27,6 +29,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
+import java.util.List;
 import java.util.Optional;
 
 public class Swerve extends SubsystemBase {
@@ -35,7 +38,10 @@ public class Swerve extends SubsystemBase {
     private final SwerveModuleKrakenFalcon[] mSwerveMods;
     private final Pigeon2 gyro;
     private ChassisSpeeds latestRobotRelativeSpeeds;
-    PhotonCameraHandler camera1;
+    PhotonCamera camera1;
+    PhotonPoseEstimator photonPoseEstimator;
+    private Field2d field;
+    Pose3d lastpose;
 
     public final TunableValue PATHPLANNER_TRANSLATION_P;
     public final TunableValue PATHPLANNER_TRANSLATION_I;
@@ -48,21 +54,28 @@ public class Swerve extends SubsystemBase {
     public Swerve(PhotonCameraHandler photonCameraHandler1) {
         gyro = new Pigeon2(Constants.pigeonID);
         gyro.clearStickyFaults();
-        this.camera1 = photonCameraHandler1;
-        latestRobotRelativeSpeeds = new ChassisSpeeds(0, 0, 0);
-
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
         var visionStdDevs = VecBuilder.fill(1, 1, 1);
+        this.camera1 = new PhotonCamera(Constants.camera1Config.photonCamera);
+        AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        Transform3d robotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera1, robotToCam);
+        photonPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+        latestRobotRelativeSpeeds = new ChassisSpeeds(0, 0, 0);
+        this.lastpose = new Pose3d();
 
-        PATHPLANNER_TRANSLATION_P = new TunableValue("PATHPLANNER_TRANSLATION_P", Constants.SwerveConstants.pathplannertranslationpid.kp , Constants.DEBUG);
-        PATHPLANNER_TRANSLATION_I = new TunableValue("PATHPLANNER_TRANSLATION_I", Constants.SwerveConstants.pathplannertranslationpid.ki , Constants.DEBUG);
-        PATHPLANNER_TRANSLATION_D = new TunableValue("PATHPLANNER_TRANSLATION_D", Constants.SwerveConstants.pathplannertranslationpid.kd , Constants.DEBUG);
 
-        PATHPLANNER_ROTATION_P = new TunableValue("PATHPLANNER_ROTATION_P", Constants.SwerveConstants.pathplannerrotationpid.kp , Constants.DEBUG);
-        PATHPLANNER_ROTATION_I = new TunableValue("PATHPLANNER_ROTATION_I", Constants.SwerveConstants.pathplannerrotationpid.ki , Constants.DEBUG);
-        PATHPLANNER_ROTATION_D = new TunableValue("PATHPLANNER_ROTATION_D", Constants.SwerveConstants.pathplannerrotationpid.kd , Constants.DEBUG);
 
-        mSwerveMods = new SwerveModuleKrakenFalcon[] {
+
+        PATHPLANNER_TRANSLATION_P = new TunableValue("PATHPLANNER_TRANSLATION_P", Constants.SwerveConstants.pathplannertranslationpid.kp, Constants.DEBUG);
+        PATHPLANNER_TRANSLATION_I = new TunableValue("PATHPLANNER_TRANSLATION_I", Constants.SwerveConstants.pathplannertranslationpid.ki, Constants.DEBUG);
+        PATHPLANNER_TRANSLATION_D = new TunableValue("PATHPLANNER_TRANSLATION_D", Constants.SwerveConstants.pathplannertranslationpid.kd, Constants.DEBUG);
+
+        PATHPLANNER_ROTATION_P = new TunableValue("PATHPLANNER_ROTATION_P", Constants.SwerveConstants.pathplannerrotationpid.kp, Constants.DEBUG);
+        PATHPLANNER_ROTATION_I = new TunableValue("PATHPLANNER_ROTATION_I", Constants.SwerveConstants.pathplannerrotationpid.ki, Constants.DEBUG);
+        PATHPLANNER_ROTATION_D = new TunableValue("PATHPLANNER_ROTATION_D", Constants.SwerveConstants.pathplannerrotationpid.kd, Constants.DEBUG);
+
+        mSwerveMods = new SwerveModuleKrakenFalcon[]{
                 new SwerveModuleKrakenFalcon(0, Constants.SwerveConstants.mod0),
                 new SwerveModuleKrakenFalcon(1, Constants.SwerveConstants.mod1),
                 new SwerveModuleKrakenFalcon(2, Constants.SwerveConstants.mod2),
@@ -71,6 +84,7 @@ public class Swerve extends SubsystemBase {
 
         swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, getGyroYaw(), getModulePositions());
         swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.swerveKinematics, getGyroYaw(), getModulePositions(), getPose(), stateStdDevs, visionStdDevs);
+        field = new Field2d();
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -89,7 +103,7 @@ public class Swerve extends SubsystemBase {
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
 
-        for(SwerveModuleKrakenFalcon mod : mSwerveMods){
+        for (SwerveModuleKrakenFalcon mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
 
@@ -120,7 +134,7 @@ public class Swerve extends SubsystemBase {
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
 
-        for(SwerveModuleKrakenFalcon mod : mSwerveMods) {
+        for (SwerveModuleKrakenFalcon mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
 
@@ -132,7 +146,7 @@ public class Swerve extends SubsystemBase {
 
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for(SwerveModuleKrakenFalcon mod : mSwerveMods) {
+        for (SwerveModuleKrakenFalcon mod : mSwerveMods) {
             states[mod.moduleNumber] = mod.getState();
         }
         return states;
@@ -140,7 +154,7 @@ public class Swerve extends SubsystemBase {
 
     public SwerveModulePosition[] getModulePositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
-        for(SwerveModuleKrakenFalcon mod : mSwerveMods) {
+        for (SwerveModuleKrakenFalcon mod : mSwerveMods) {
             positions[mod.moduleNumber] = mod.getPosition();
         }
         return positions;
@@ -175,50 +189,30 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public void updateOdometry(PhotonCameraHandler camera) {
-        if (camera.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).isPresent()) {
-            swerveDrivePoseEstimator.addVisionMeasurement(camera.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().estimatedPose.toPose2d(), camera.getEstimatedGlobalPose(swerveDrivePoseEstimator.getEstimatedPosition()).get().timestampSeconds);
-        }
 
-    }
 
     @Override
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveDrivePoseEstimator.update(getGyroYaw(), getModulePositions());
-        LimelightHelpers.SetRobotOrientation("limelight-shoot", swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 37, 0, 0, 0);
-        var alliance = DriverStation.getAlliance();
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight-shoot");
-        if (alliance.isPresent()) {
-            if (alliance.get() == DriverStation.Alliance.Red) {
-                mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight-shoot");
-            } else {
-                mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-shoot");
-            }
+        photonPoseEstimator.setLastPose(lastpose);
+        Logger.recordOutput("Camera/isconnectedcodeside", camera1.isConnected());
+        Logger.recordOutput("Camera/hasTargets", camera1.hasTargets());
+        Logger.recordOutput("Camera/Targets", camera1.getLatestResult().getTargets().toString());
+        Optional<EstimatedRobotPose> estimatedPoseOpt = photonPoseEstimator.update(camera1.getLatestResult());
+        Logger.recordOutput("Camera/shouldUpdate", estimatedPoseOpt.isPresent());
+        if (estimatedPoseOpt.isPresent()) {
+            EstimatedRobotPose pose = estimatedPoseOpt.get();
+            Logger.recordOutput("Camera/tags", (String[]) pose.targetsUsed.toArray());
+            Logger.recordOutput("Camera/EstimatedPose", pose.estimatedPose.toPose2d());
+            swerveDrivePoseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+            lastpose = pose.estimatedPose;
         }
-
-        boolean doRejectUpdate = false;
-        if(Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-        {
-            doRejectUpdate = true;
-        }
-        if(mt2.tagCount == 0)
-        {
-            doRejectUpdate = true;
-        }
-        if(!doRejectUpdate)
-        {
-            swerveDrivePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-            swerveDrivePoseEstimator.addVisionMeasurement(
-                    mt2.pose,
-                    mt2.timestampSeconds);
-        }
-
-        updateOdometry(camera1);
-
-        // Log odometry and pose estimator data
+        field.setRobotPose(swerveDrivePoseEstimator.getEstimatedPosition());
         Logger.recordOutput("Swerve/OdometryPose", swerveOdometry.getPoseMeters());
         Logger.recordOutput("Swerve/PoseEstimatorPose", swerveDrivePoseEstimator.getEstimatedPosition());
-        //Logger.recordOutput("Swerve/GyroConnected", gyro.get);
+        SmartDashboard.putData("Swerve/FieldPose", field);
+
+
     }
 }

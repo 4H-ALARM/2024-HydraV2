@@ -24,15 +24,23 @@ public class PhotonCameraHandler {
 
         this.photonCamera = new PhotonCamera(config.photonCamera);
         this.photonPoseEstimator = new PhotonPoseEstimator(this.config.aprilTagFieldLayout, this.config.photonPoseEstimatorStrategy, this.photonCamera, this.config.robotToCam);
+        photonPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+    }
+
+    public Pose2d getEstimatedPose(Pose2d prevEstimatedRobotPose) {
+        photonPoseEstimator.setLastPose(prevEstimatedRobotPose);
+        return photonPoseEstimator.update().get().estimatedPose.toPose2d();
     }
 
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        if (photonPoseEstimator.update().isPresent()) {
-            Logger.recordOutput("Cameras/"+this.config.photonCamera+"/pose", photonPoseEstimator.update().get().estimatedPose.toPose2d());
-        }
-        Logger.recordOutput("Cameras/"+this.config.photonCamera+"/isConnected", photonCamera.isConnected());
+        photonPoseEstimator.setLastPose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
+    }
+
+    public boolean shouldUpdate() {
+        boolean value = photonPoseEstimator.getFieldTags().getTags().isEmpty();
+        Logger.recordOutput("Camera/shouldUpdate", value);
+        return value;
     }
 
 
